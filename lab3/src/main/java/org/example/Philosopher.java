@@ -1,106 +1,63 @@
 package org.example;
 
-import java.util.Random;
+import java.util.concurrent.CountDownLatch;
 
-public class Philosopher extends Thread {
-    private final Fork left;
-    private final Fork right;
-    private int id;
+public abstract class Philosopher extends Thread {
+    protected final Fork left;
+    protected final Fork right;
+    private static int counter = 0; // no of philosophers
+    protected final int id;
 
-    public Philosopher(Fork left, Fork right, int id) {
-        this.left = left;
-        this.right = right;
-        this.id = id;
+
+    public int getEatenCounter() {
+        return eatenCounter;
     }
 
-    @Override
-    public void run() {
+    public long getTimeWaited() {
+        return timeWaited;
+    }
+
+    protected long timeWaited = 0;
+    protected int eatenCounter = 0;
+
+    public Philosopher(Fork left, Fork right) {
+        this.id = ++counter;
+        this.left = left;
+        this.right = right;
+    }
+
+    public void think() throws InterruptedException {
+        System.out.println("Philosopher " + id + " is thinking");
+        Thread.sleep((int)(1000));
+//        Thread.sleep(100);
+    }
+
+    public void eat() throws InterruptedException {
+//        System.out.println("Philosopher " + id + " picked up the right and is eating.");
+        Thread.sleep((int) (2000));
+//        Thread.sleep(100);
+    }
+
+    protected abstract void pickForks() throws InterruptedException;
+
+    public void putForks() throws InterruptedException {
+        left.drop();
+        right.drop();
+        System.out.println("Philosopher " + id + " put down forks");
+    }
+
+    public void run(){
         try {
-            // ZADANIE 1
-//            while (true) {
-//                System.out.println("Philosopher " + id + " is thinking.");
-//                Thread.sleep((int) (1000));
-//
-//                left.pick();
-//                System.out.println("Philosopher " + id + " picked up the left.");
-//                Thread.sleep((int) (1000));
-//
-//                right.pick();
-//                System.out.println("Philosopher " + id + " picked up the right and is eating.");
-//                Thread.sleep((int) (2000));
-//
-//                left.drop();
-//                right.drop();
-//                System.out.println("Philosopher " + id + " put down both.");
-//                Thread.sleep((int) (1000));
-//            }
-
-
-            // ZADANIE 3
-//            while (true) {
-//                System.out.println("Philosopher " + id + " is thinking");
-//                Thread.sleep((int) (Math.random() * 1000));
-//
-//                if (id % 2 == 0){
-//                    right.pick();
-//                    System.out.println("Philosopher " + id + " picked up the right.");
-//                    Thread.sleep((int) (Math.random() * 1000));
-//                    left.pick();
-//                    System.out.println("Philosopher " + id + " picked up the left and is eating.");
-//                    Thread.sleep((int) (Math.random() * 2000));
-//                    left.drop();
-//                    right.drop();
-//                    System.out.println("Philosopher " + id + " dropped both.");
-//                    Thread.sleep((int) (Math.random() * 1000));
-//                }
-//
-//                else{
-//                    left.pick();
-//                    System.out.println("Philosopher " + id + " picked up the left.");
-//                    Thread.sleep((int) (Math.random() * 1000));
-//                    right.pick();
-//                    System.out.println("Philosopher " + id + " picked up the right.");
-//                    Thread.sleep((int) (Math.random() * 1000));
-//                    left.drop();
-//                    right.drop();
-//                    System.out.println("Philosopher " + id + " dropped both.");
-//                    Thread.sleep((int) (Math.random() * 1000));
-//                }
-//            }
-            // ZADANIE 4
-            while(true) {
-                System.out.println("Philosopher " + id + " is thinking.");
-                Thread.sleep((int) (Math.random() * 1000));
-                Random rand = new Random();
-                int res = rand.nextInt(2);
-                if(res == 0) {
-                    left.pick();
-                    System.out.println("Philosopher " + id + " picked up the left.");
-                    Thread.sleep((int) (Math.random() * 1000));
-                    right.pick();
-                    System.out.println("Philosopher " + id + " picked up the right and is eating.");
-                    Thread.sleep((int) (Math.random() * 3000));
-                    left.drop();
-                    right.drop();
-                    System.out.println("Philosopher " + id + " put down both.");
-                    Thread.sleep((int) (Math.random() * 1000));
-                }
-                else {
-                    right.pick();
-                    System.out.println("Philosopher " + id + " picked up the right.");
-                    Thread.sleep((int) (Math.random() * 1000));
-                    left.pick();
-                    System.out.println("Philosopher " + id + " picked up the left and is eating.");
-                    Thread.sleep((int) (Math.random() * 3000));
-                    right.drop();
-                    left.drop();
-                    System.out.println("Philosopher " + id + " put down both.");
-                    Thread.sleep((int) (Math.random() * 1000));
-                }
+            while (true) {
+                think();
+                pickForks();
+                eat();
+                putForks();
             }
         }
         catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
+
 }

@@ -6,35 +6,18 @@ import java.util.concurrent.Executors;
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
-    public static void main(String[] args) {
-        int N = 6;
-        Philosopher[] philosophers = new Philosopher[N];
-        Fork[] forks = new Fork[N];
 
-        PhilosopherLock[] philosopherLocks = new PhilosopherLock[N];
-        ForkLock[] forkLocks = new ForkLock[N];
-
-        for (int i = 0; i < N; i++) {
-            forks[i] = new Fork();
-            forkLocks[i] = new ForkLock();
-        }
-        for (int i = 0; i < N; i++) {
-            Fork leftFork = forks[i];
-            Fork rightFork = forks[(i + 1) % N];
-            philosophers[i] = new Philosopher(leftFork, rightFork, i);
-
-            ForkLock leftLock = forkLocks[i];
-            ForkLock rightLock = forkLocks[(i + 1) % N];
-            philosopherLocks[i] = new PhilosopherLock(leftLock, rightLock, i);
+    public static void main(String[] args) throws InterruptedException {
+        int cnt = 0;
+        for (int n = 5; n <= 20; n += 5) {
+            for (int i = 1; i < 7; i++) {
+                Simulation sim = new Simulation(n, i);
+                sim.run();
+                Thread.sleep(5000);
+                System.out.println("koniec symulacji numer " + ++cnt);
+            }
         }
 
-        ExecutorService executorService = Executors.newFixedThreadPool(N);
-        for (int i = 0; i < N; i++) {
-            // zadanie 1
-            philosophers[i].start();
 
-            // zadanie 2
-            //philosopherLocks[i].start();
-        }
     }
 }
